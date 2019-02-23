@@ -1,15 +1,15 @@
 # AWS predictive engine API
 
-# Virtualenv
+## Notebook requirements
 virtualenv -v venv -p python3.6
-
-# Python libs
+source venv/bin/activate
 pip install numpy scikit-learn pandas ipython jupyter lab
 
-# Layer
-Layers have a maximum of 50MB so we have to generate 2 different layers
+## Layer
+./create_layer.sh
 
+## Deployment
+sls deploy
 
-
-
-# aws-prediction-api-serverless
+## Remove everything
+sls remove

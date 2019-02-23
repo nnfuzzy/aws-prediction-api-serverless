@@ -1,0 +1,49 @@
+service: aws-simple-predictive-engine
+
+package:
+  individually: true
+
+provider:
+  name: aws
+  runtime: python3.6
+  timeout: 2
+  apiKeys:
+  - ${self:provider.stage}-predictive-engine
+  usagePlan:
+    quota:
+      limit: 1000000
+      offset: 0
+      period: DAY
+    throttle:
+      burstLimit: 100000
+  region: eu-central-1
+  endpointType: REGIONAL
+
+layers:
+  scikitLayer:
+    path: build
+    description: scikit-learn
+    compatibleRuntimes:
+     - python3.6
+
+functions:
+  get_prediction:
+    handler: get_prediction.handler
+    description: This function predict scores for new data
+    memorySize: 256
+    timeout: 3
+    reservedConcurrency: 10
+    package:
+      exclude:
+      - .ipynb_checkpoints/**
+      - .serverlsess/**
+      - build/**
+      - venv/**
+
+    events:
+    - http:
+        path: v1/predict
+        method: post
+        private: true
+    layers:
+    - {Ref: ScikitLayerLambdaLayer}
